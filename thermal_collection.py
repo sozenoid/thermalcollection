@@ -86,15 +86,13 @@ def convert_position_snapshots_to_velocity_snapshots(xyztraj, dt=1e-15):
 	conv=(1e-10/1e-15)**2*1.66e-27*6.022e23/4.184/1e3 # (Ang/fs)**2*amu*mol/kcal
 	ekin = [float(0.5*conv*sum([y[0]**2*y[1] for y in zip(np.reshape(x, x.shape[0]*x.shape[1]), [dic_weights[i] for k in atm_list for i in [k]*3])])) for x in snapshots_vels]
 	ekin = [x for x in ekin if np.abs(x)<1e3 ]
-	plt.plot(ekin)
-	plt.show()
 	with open(xyztraj+"-EKIN", "w") as w:
 		for els in ekin:
 			w.write(str(els)+"\n")
 	
 	
 if __name__ == "__main__":
-	from matplotlib import pyplot as plt
+	#from matplotlib import pyplot as plt
 	import numpy as np
 	import sys
 	if len(sys.argv) <3:
