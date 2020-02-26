@@ -89,10 +89,31 @@ def convert_position_snapshots_to_velocity_snapshots(xyztraj, dt=1e-15):
 	with open(xyztraj+"-EKIN", "w") as w:
 		for els in ekin:
 			w.write(str(els)+"\n")
-	
+
+def plot_summary_EKIN(fcomplex, gcomplex, smallfrag, bigfrag):
+	"""
+	PRE : Takes in EKIN files that contain a list of kinetic energies in kcal/mol
+	POST: Plot them along with their variance
+	"""
+	for f in zip([fcomplex, gcomplex, smallfrag, bigfrag], ["E(G2@CB[7])","E(G2) vacuum","E(G2) @CB[7]","G2@E(CB[7])"], [.2,.2,0.2,0.2]):
+		with open(f[0], "rb") as r:
+			width =1000
+			ekin = [float(x.strip()) for x in r.readlines()]
+			if f[1] == "E(G2) vacuum":
+				ekin = ekin[10000:]
+			ekin = [x  for x in ekin[:40000] if x<200]
+			moving_av = np.convolve(ekin, np.ones(width)/width)
+			plt.plot(moving_av[1002:-width], label="{0} ({1:3.1f}/{2:3.1f})".format(f[1], np.mean(ekin[2:]), np.var(ekin[2:])), linewidth=1, alpha=1)
+			plt.plot(ekin[2:], linewidth=f[2], alpha=f[2])
+	plt.title(gcomplex.split("/")[-1])
+	plt.legend()
+# =============================================================================
+# 	plt.show()
+# =============================================================================
+	plt.savefig(gcomplex+"-curves.png")
 	
 if __name__ == "__main__":
-	#from matplotlib import pyplot as plt
+	from matplotlib import pyplot as plt
 	import numpy as np
 	import sys
 	if len(sys.argv) <3:
@@ -108,11 +129,13 @@ if __name__ == "__main__":
 		print "will read the guest and compute the kinetic energy for the guest, the fragments and the complex"
 		name = sys.argv[2]
 		convert_position_snapshots_to_velocity_snapshots(name)
-	elif len(sys.ar.gv) == 3 and sys.argv[1] == "plot":
+	elif len(sys.argv) == 3 and sys.argv[1] == "plot":
 		print "will read the guest and compute the kinetic energy for the guest, the fragments and the complex"
-		guest_name = sys.argv[2]
-		complex_name = guest_name.replace("GUEST", "COMPLEX")
-		small_frag_name = complex_name.replace("-EKIN", "-small_frag.xyz-EKIN" )
-		big_frag_name = complex_name.replace("-EKIN","-large_frag.xyz-EKIN")
-		plot_summary_EKIN(complex_name, guest_name, small_frag_name, big_frag_name)
+		number = sys.argv[2].split('-')[0]
+		fcomplex = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-EKIN".format(number)
+		gcomplex = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/SINGLE_GUESTS/{}-orig.pdb.xyz-pos-1.xyz-EKIN".format(number)
+		smallfrag = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-small_frag.xyz-EKIN".format(number)
+		bigfrag = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-large_frag.xyz-EKIN".format(number)
+			
+		plot_summary_EKIN(fcomplex, gcomplex, smallfrag, bigfrag)
 		
