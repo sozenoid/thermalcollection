@@ -132,10 +132,11 @@ if __name__ == "__main__":
 	elif len(sys.argv) == 3 and sys.argv[1] == "plot":
 		print "will read the guest and compute the kinetic energy for the guest, the fragments and the complex"
 		number = sys.argv[2].split('-')[0]
-		fcomplex = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-EKIN".format(number)
-		gcomplex = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/SINGLE_GUESTS/{}-orig.pdb.xyz-pos-1.xyz-EKIN".format(number)
-		smallfrag = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-small_frag.xyz-EKIN".format(number)
-		bigfrag = "/home/macenrola/Documents/Thermal_energy_collector/known-guest-pdbs/OUT/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-large_frag.xyz-EKIN".format(number)
+		path = "/home/users/astar/ihpc/stuhlamb/scratch/THERMAL_COLLECTION"
+		fcomplex = "{}/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-EKIN".format(path, number)
+		gcomplex = "{}/SINGLE_GUESTS/{}-orig.pdb.xyz-pos-1.xyz-EKIN".format(path, number)
+		smallfrag = "{}/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-small_frag.xyz-EKIN".format(path, number)
+		bigfrag = "{}/COMPLEXES/{}-orig.pdb.xyz_a_0.0_s_0.0_0.0_docked.xyz-pos-1.xyz-large_frag.xyz-EKIN".format(path, number)
 			
 		plot_summary_EKIN(fcomplex, gcomplex, smallfrag, bigfrag)
 		
